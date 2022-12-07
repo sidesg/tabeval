@@ -1,0 +1,3 @@
+source_donnees: "db-access/acqCont.xlsx"
+rapport_nom: "acqCont"
+seuil_analyse: 15
