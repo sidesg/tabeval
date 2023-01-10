@@ -29,13 +29,13 @@ def tab_imp(path:Path) -> pd.DataFrame:
         case _:
             raise RuntimeError("Extention de fichier non reconnue.")
 
-def stripc(cell):
+def strip_if_str(cell):
     if isinstance(cell, str):
         return cell.strip()
     else:
         return cell
 
-def stripconcec(cell):
+def concatescpaces_if_str(cell):
     if isinstance(cell, str):
         return re.sub(r"\s+", " ", cell)
     else:

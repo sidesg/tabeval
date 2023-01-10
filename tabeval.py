@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 from pathlib import Path
 import evaloutils as eo
 import pandas as pd
@@ -11,21 +13,21 @@ with open("config.yaml", "r", encoding="utf8") as infile:
     except:
         print('Erreur de changement des paramètres.')
 
-SOURCEPATH = Path.home() / "donnees_cinteq" / confdict["source_donnees"]
+SOURCEPATH = Path("donnees") / confdict["source_donnees"]
 
 OUTPATH = Path("rapports") 
 NAMEROOT = confdict["rapport_nom"]
-SEUL_ANAL = confdict["seuil_analyse"]
-
 RAPPATH = OUTPATH / NAMEROOT
+
+SEUL_ANAL = confdict["seuil_analyse"]
 
 if not RAPPATH.exists():
     RAPPATH.mkdir()
 
 donneesdf = eo.tab_imp(SOURCEPATH)
 
-donneesdf.applymap(eo.stripc)
-donneesdf.applymap(eo.stripconcec)
+donneesdf.applymap(eo.strip_if_str)
+donneesdf.applymap(eo.concatescpaces_if_str)
 
 donneedict = {
     "colname": [], 

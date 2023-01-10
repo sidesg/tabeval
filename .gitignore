@@ -2,3 +2,5 @@
 *.code-workspace
 histo.py
 *.csv
+*.xlsx
+*.tsv
