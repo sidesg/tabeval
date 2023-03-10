@@ -1,3 +1,0 @@
-source_donnees: "acq_cont.csv"
-rapport_nom: "acq_cont"
-seuil_analyse: 15

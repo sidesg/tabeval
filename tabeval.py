@@ -4,19 +4,23 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import re
-import yaml
-
+import argparse
 
 def main():
-    confdict = ouvrir_config()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("source", help="Nom du fichier à analyser dans /donnees.", type=str)
+    parser.add_argument("destination", help="Nom du dossier dans /rapports où l'analyse est enregistrée.", type=str)
+    parser.add_argument("--seuil_analyse", "-sa", type=int)
+    
+    args = parser.parse_args()
 
-    SOURCEPATH = Path("donnees") / confdict["source_donnees"]
+    SOURCEPATH = Path("donnees") / args.source
 
     OUTPATH = Path("rapports") 
-    NAMEROOT = confdict["rapport_nom"]
+    NAMEROOT = args.destination
     RAPPATH = OUTPATH / NAMEROOT
 
-    SEUL_ANAL = confdict["seuil_analyse"]
+    SEUL_ANAL = args.seuil_analyse if args.seuil_analyse else 15
 
     if not RAPPATH.exists():
         RAPPATH.mkdir()
@@ -98,18 +102,18 @@ def tab_imp(path:Path) -> pd.DataFrame:
     match path.suffix:
         case ".csv":
             try:
-                return pd.read_csv(path)
+                return pd.read_csv(path, low_memory=False)
             except:
-                return pd.read_csv(path, sep=";")
+                return pd.read_csv(path, sep=";", low_memory=False)
         
         case ".tsv":
             try:
-                return pd.read_csv(path, sep="\t")
+                return pd.read_csv(path, sep="\t", low_memory=False)
             except:
-                return pd.read_csv(path, sep="\t", encoding="cp1252")
+                return pd.read_csv(path, sep="\t", encoding="cp1252", low_memory=False)
         
         case ".xlsx":
-            return pd.read_excel(path).applymap(excelnewline)
+            return pd.read_excel(path, low_memory=False).applymap(excelnewline)
         
         case _:
             raise RuntimeError("Extention de fichier non reconnue.")
@@ -137,14 +141,6 @@ def excelnewline(cell):
         return re.sub(r"_x000d_", "\n", cell)
     else:
         return cell
-
-def ouvrir_config() -> dict | None:
-    with open("config.yaml", "r", encoding="utf8") as infile:
-        try:
-            return yaml.safe_load(infile)
-        except:
-            print('Erreur de changement des paramètres.')
-
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 **/__pycache__
 *.code-workspace
-histo.py
 *.csv
 *.xlsx
 *.tsv
