@@ -34,10 +34,10 @@ def main():
         "colname": [], 
         "nb_nonvide": [],
         "pourcent_nonvide": [],
-        "nb_valUniques": [],
-        "valUniques": [],
         "min": [],
-        "max": []
+        "max": [],
+        "nb_valUniques": [],
+        "valUniques": []
     }
 
     for col, ser in donneesdf.items():
@@ -96,7 +96,7 @@ def tab_imp(path:Path) -> pd.DataFrame:
     Ouvrir un fichier de données tabulaires et rendre un DataFrame
     '''
     if not path.exists():
-        print("Fichier n'existe pas.")
+        print("Ce fichier n'existe pas.")
         exit()
         
     match path.suffix:
@@ -113,7 +113,7 @@ def tab_imp(path:Path) -> pd.DataFrame:
                 return pd.read_csv(path, sep="\t", encoding="cp1252", low_memory=False)
         
         case ".xlsx":
-            return pd.read_excel(path, low_memory=False).applymap(excelnewline)
+            return pd.read_excel(path).applymap(excelnewline)
         
         case _:
             raise RuntimeError("Extention de fichier non reconnue.")
