@@ -6,7 +6,7 @@ import numpy as np
 import re
 import argparse
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("source", help="Nom du fichier à analyser dans /donnees.", type=str)
     parser.add_argument("destination", help="Nom du dossier dans /rapports où l'analyse est enregistrée.", type=str)
@@ -14,18 +14,18 @@ def main():
     
     args = parser.parse_args()
 
-    SOURCEPATH = Path("donnees") / args.source
+    sourcepath = Path("donnees") / args.source
 
-    OUTPATH = Path("rapports") 
-    NAMEROOT = args.destination
-    RAPPATH = OUTPATH / NAMEROOT
+    outpath = Path("rapports") 
+    nameroot = args.destination
+    rappath = outpath / nameroot
 
-    SEUL_ANAL = args.seuil_analyse if args.seuil_analyse else 15
+    seul_anal = args.seuil_analyse if args.seuil_analyse else 15
 
-    if not RAPPATH.exists():
-        RAPPATH.mkdir()
+    if not rappath.exists():
+        rappath.mkdir()
 
-    donneesdf = tab_imp(SOURCEPATH)
+    donneesdf = tab_imp(sourcepath)
 
     donneesdf.applymap(strip_if_str)
     donneesdf.applymap(concatescpaces_if_str)
@@ -50,18 +50,18 @@ def main():
 
         #Rapport de colonne iff 1 valeur unique:1 ligne
         if ser.dropna().nunique() != len(ser):
-            colname = re.sub(r"\/", "-", col)
+            colname = re.sub(r"[\/:]", "-", col)
             coldf = ser.value_counts().reset_index()
             coldf = coldf.rename(columns={"index": col, col: "nombre"})
             coldf.to_csv(
-                    RAPPATH / (f"{NAMEROOT}-{colname}.csv"),
+                    rappath / (f"{nameroot}-{colname}.csv"),
                     index=False
             )
 
-        if ser.nunique() > SEUL_ANAL:
+        if ser.nunique() > seul_anal:
             donneedict["valUniques"].append("")
 
-        elif ser.nunique() <= SEUL_ANAL:
+        elif ser.nunique() <= seul_anal:
             valcounts = ser.dropna().value_counts()
             valcounts = valcounts.reset_index().sort_values(by=col, ascending=False)
             valcounts = valcounts["index"].astype(str) + " : " + valcounts[col].astype(str)
@@ -86,7 +86,7 @@ def main():
 
 
     outdf.to_csv(
-        RAPPATH / f"{NAMEROOT}.csv", 
+        rappath / f"{nameroot}.csv", 
         index=False    
     )
 
@@ -129,12 +129,6 @@ def concatescpaces_if_str(cell):
         return re.sub(r"\s+", " ", cell)
     else:
         return cell
-
-def strlower(cell):
-    if isinstance(cell, str):
-        return cell.lower()
-    else:
-        return cell    
 
 def excelnewline(cell):
     if isinstance(cell, str):
